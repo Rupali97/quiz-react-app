@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import {useState, useEffect} from "react"
+import quizArray from "./quizArray"
+import QuestionBox from "./components/QuestionBox"
+import Result from "./components/Result"
 
 function App() {
+
+  const [questionBank, setQuestionBank] = useState([]);
+  const [score, setScore] = useState();
+  const [responses, setResponses] = useState(0);
+
+  const getQuestion = () => {
+    quizArray()
+      .then(question => {setQuestionBank(question)})
+  }
+
+  useEffect(() => {
+   getQuestion()
+  }, [])
+
+  const computeAnswer = (userAnswer, correct) => {
+    if(userAnswer === correct){
+      setScore(score+1)
+    }
+    setResponses(responses < 5 ? responses + 1 : 5)
+  }
+
+  const playAgain = () => {
+    getQuestion();
+    setScore(0);
+    setResponses(0);
+  }
+
+
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <div className="title">Quiz App</div>
+      {questionBank.length > 0 && responses < 5 &&
+       questionBank.map(({question, answers,correct, questionId }) => (
+         <QuestionBox question={question} options={answers} key={questionId} selected={userAnswer => computeAnswer(userAnswer, correct)} />
+       ))
+      }
+      {
+        responses === 5 ? <Result score={score} playAgain={playAgain} /> : null
+      }
     </div>
   );
 }
