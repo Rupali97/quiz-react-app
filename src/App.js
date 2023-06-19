@@ -6,7 +6,7 @@ import Result from "./components/Result"
 function App() {
 
   const [questionBank, setQuestionBank] = useState([]);
-  const [score, setScore] = useState();
+  const [score, setScore] = useState(0);
   const [responses, setResponses] = useState(0);
 
   const getQuestion = () => {
